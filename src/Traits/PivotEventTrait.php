@@ -66,4 +66,45 @@ trait PivotEventTrait
             $this->observables
         );
     }
+    
+    public static function boot()
+    {
+        parent::boot();
+
+        static::pivotAttaching(function ($model, $relationName, $pivotIds, $pivotIdsAttributes) {
+            if (method_exists($model, 'beforeAttach')) {
+                $model->beforeAttach($relationName, $pivotIds, $pivotIdsAttributes);
+            }
+        });
+
+        static::pivotAttached(function ($model, $relationName, $pivotIds, $pivotIdsAttributes) {
+            if (method_exists($model, 'afterAttach')) {
+                $model->afterAttach($relationName, $pivotIds, $pivotIdsAttributes);
+            }
+        });
+
+        static::pivotDetaching(function ($model, $relationName, $pivotIds) {
+            if (method_exists($model, 'beforeDetach')) {
+                $model->beforeDetach($relationName, $pivotIds);
+            }
+        });
+
+        static::pivotDetached(function ($model, $relationName, $pivotIds) {
+            if (method_exists($model, 'afterDetach')) {
+                $model->afterDetach($relationName, $pivotIds);
+            }
+        });
+
+        static::pivotUpdating(function ($model, $relationName, $pivotIds, $pivotIdsAttributes) {
+            if (method_exists($model, 'beforePivotUpdate')) {
+                $model->beforePivotUpdate($relationName, $pivotIds, $pivotIdsAttributes);
+            }
+        });
+
+        static::pivotUpdated(function ($model, $relationName, $pivotIds, $pivotIdsAttributes) {
+            if (method_exists($model, 'afterPivotUpdate')) {
+                $model->afterPivotUpdate($relationName, $pivotIds, $pivotIdsAttributes);
+            }
+        });
+    }
 }
